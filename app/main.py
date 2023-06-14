@@ -14,7 +14,7 @@ def root():
     return {"status": "running"}
 
 
-@app.post("/register")
+@app.post("/register", response_model=user_schema.UserResponse)
 def register(user: user_schema.UserRegister, db: Session = Depends(database.get_db)):
     new_user = models.User(**user.dict())
     print(user.dict())
