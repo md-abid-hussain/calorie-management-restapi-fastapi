@@ -1,4 +1,5 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
+from sqlalchemy.orm import Session
 from .schemas import user_schema
 from .models import models
 from .database import database
@@ -14,5 +15,10 @@ def root():
 
 
 @app.post("/register")
-def register(user: user_schema.UserRegister):
-    return user.dict()
+def register(user: user_schema.UserRegister, db: Session = Depends(database.get_db)):
+    new_user = models.User(**user.dict())
+    print(user.dict())
+    db.add(new_user)
+    db.commit()
+    db.refresh(new_user)
+    return new_user
