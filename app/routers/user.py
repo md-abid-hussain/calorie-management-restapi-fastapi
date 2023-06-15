@@ -28,3 +28,9 @@ def register(user: user_schema.UserRegister, db: Session = Depends(database.get_
     db.commit()
     db.refresh(new_user)
     return new_user
+
+
+@router.get("/{id}", response_model=user_schema.UserResponse)
+def get_user_by_id(db: Session = Depends(database.get_db), id: int = None):
+    user = db.query(models.User).filter(models.User.id == id).first()
+    return user
