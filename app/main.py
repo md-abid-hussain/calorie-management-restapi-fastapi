@@ -1,8 +1,8 @@
 from fastapi import FastAPI, Depends
-from sqlalchemy.orm import Session
-from .schemas import user_schema
+
 from .models import models
 from .database import database
+from .routers import user
 
 models.database.Base.metadata.create_all(bind=database.engine)
 
@@ -14,11 +14,4 @@ def root():
     return {"status": "running"}
 
 
-@app.post("/register", response_model=user_schema.UserResponse)
-def register(user: user_schema.UserRegister, db: Session = Depends(database.get_db)):
-    new_user = models.User(**user.dict())
-    print(user.dict())
-    db.add(new_user)
-    db.commit()
-    db.refresh(new_user)
-    return new_user
+app.include_router(user.router)
