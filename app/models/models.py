@@ -19,8 +19,8 @@ class Entry(database.Base):
     __tablename__ = "entries"
 
     id = Column(Integer, primary_key=True, nullable=False)
-    date = Column(DATE, nullable=False)
-    time = Column(TIME, nullable=False)
+    date = Column(DATE, nullable=False, server_default=text("(date('now'))"))
+    time = Column(TIME, nullable=False, server_default=text("(time('now'))"))
     meal_desc = Column(String, nullable=False)
     calories = Column(Integer, nullable=False, server_default=text("0"))
     user_id = Column(
