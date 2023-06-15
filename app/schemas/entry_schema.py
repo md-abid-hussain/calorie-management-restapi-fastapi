@@ -3,10 +3,10 @@ from pydantic import BaseModel
 
 
 class EntryBase(BaseModel):
-    date: date
-    time: time
+    date: date | None
+    time: time | None
     meal_desc: str
-    calories: int
+    calories: int | None
 
 
 class EntryCreate(EntryBase):
