@@ -4,6 +4,7 @@ from typing import List
 from ..database import database
 from ..models import models
 from ..schemas import entry_schema
+from ..utils import oauth2
 
 router = APIRouter(
     prefix="/entries",
@@ -12,8 +13,13 @@ router = APIRouter(
 
 
 @router.get("/", response_model=List[entry_schema.EntryResponse])
-def get_all_entries(db: Session = Depends(database.get_db)):
-    result = db.query(models.Entry).all()
+def get_all_entries(
+    db: Session = Depends(database.get_db),
+    current_user=Depends(oauth2.get_current_user),
+):
+    result = (
+        db.query(models.Entry).filter(models.Entry.user_id == current_user.id).all()
+    )
     return result
 
 
@@ -21,9 +27,11 @@ def get_all_entries(db: Session = Depends(database.get_db)):
     "/", status_code=status.HTTP_201_CREATED, response_model=entry_schema.EntryResponse
 )
 def create_new_entry(
-    entry: entry_schema.EntryCreate, db: Session = Depends(database.get_db)
+    entry: entry_schema.EntryCreate,
+    db: Session = Depends(database.get_db),
+    current_user=Depends(oauth2.get_current_user),
 ):
-    new_entry = models.Entry(**entry.dict())
+    new_entry = models.Entry(user_id=current_user.id, **entry.dict())
     db.add(new_entry)
     db.commit()
     db.refresh(new_entry)
@@ -31,13 +39,24 @@ def create_new_entry(
 
 
 @router.get("/{entry_id}", response_model=entry_schema.EntryResponse)
-def get_entry_by_id(entry_id: int, db: Session = Depends(database.get_db)):
+def get_entry_by_id(
+    entry_id: int,
+    db: Session = Depends(database.get_db),
+    current_user=Depends(oauth2.get_current_user),
+):
     result = db.query(models.Entry).filter(models.Entry.id == entry_id).first()
     if not result:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Entry with id {entry_id} not found",
         )
+
+    if result.user_id != current_user.id:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Entry with id {entry_id} not found",
+        )
+
     return result
 
 
@@ -46,12 +65,19 @@ def update_entry(
     entry_id: int,
     entry: entry_schema.EntryCreate,
     db: Session = Depends(database.get_db),
+    current_user=Depends(oauth2.get_current_user),
 ):
     result_query = db.query(models.Entry).filter(models.Entry.id == entry_id)
-    if not result_query.first():
+    result = result_query.first()
+    if not result:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Entry with id {entry_id} not found",
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Entry with id {entry_id} does not exist",
+        )
+    if result.user_id != current_user.id:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Entry with id {entry_id} does not exist",
         )
     result_query.update(entry.dict())
     db.commit()
@@ -59,9 +85,19 @@ def update_entry(
 
 
 @router.delete("/{entry_id}")
-def delete_entry(entry_id: int, db: Session = Depends(database.get_db)):
+def delete_entry(
+    entry_id: int,
+    db: Session = Depends(database.get_db),
+    current_user=Depends(oauth2.get_current_user),
+):
     delete_query = db.query(models.Entry).filter(models.Entry.id == entry_id)
-    if not delete_query.first():
+    result = delete_query.first()
+    if not result:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Entry with id {entry_id} does not exist",
+        )
+    if result.user_id != current_user.id:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=f"Entry with id {entry_id} does not exist",
