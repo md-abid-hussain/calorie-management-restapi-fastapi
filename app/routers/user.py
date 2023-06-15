@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
+from typing import List
 from ..schemas import user_schema
 from ..models import models
 from ..database import database
@@ -9,6 +10,12 @@ router = APIRouter(
     prefix="/users",
     tags=["users"],
 )
+
+
+@router.get("/", response_model=List[user_schema.UserResponse])
+def get_all_user(db: Session = Depends(database.get_db)):
+    users = db.query(models.User).all()
+    return users
 
 
 @router.post("/register", response_model=user_schema.UserResponse)
