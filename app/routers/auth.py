@@ -4,11 +4,12 @@ from sqlalchemy.orm import Session
 from ..database import database
 from ..models import models
 from ..utils import oauth2, crypto
+from ..schemas import token_schema
 
 router = APIRouter(tags=["Authentication"])
 
 
-@router.post("/login")
+@router.post("/login", response_model=token_schema.Token)
 def login(
     user_credential: OAuth2PasswordRequestForm = Depends(),
     db: Session = Depends(database.get_db),
