@@ -14,6 +14,8 @@ headers = {"Content-Type": "application/json", "x-app-id": APP_ID, "x-app-key": 
 def get_calories(text: str):
     data = {"query": text}
     response = requests.post(url, headers=headers, json=data)
+    if response.status_code != 200:
+        return 0
     result = response.json().get("foods")
     calories = 0
     for food in result:
