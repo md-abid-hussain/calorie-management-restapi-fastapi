@@ -50,3 +50,16 @@ def get_current_user(
     token_data = verify_access_token(token, credentials_exception)
     user = db.query(models.User).filter(models.User.id == token_data.id).first()
     return user
+
+
+def create_role_verifier(allowed_roles: list):
+    def verify(current_user=Depends(get_current_user)):
+        if current_user.role.value not in allowed_roles:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail=f"User is not an admin",
+                headers={"WWW-Authenticate": "Bearer"},
+            )
+        return current_user
+
+    return verify
