@@ -4,12 +4,10 @@ from typing import List
 from ..schemas import user_schema
 from ..models import models
 from ..database import database
+from ..utils import oauth2
 
-
-router = APIRouter(
-    prefix="/users",
-    tags=["users"],
-)
+verify_role = oauth2.create_role_verifier(["manager", "admin"])
+router = APIRouter(prefix="/users", tags=["users"], dependencies=[Depends(verify_role)])
 
 
 @router.get("/", response_model=List[user_schema.UserResponse])
