@@ -1,5 +1,16 @@
-from sqlalchemy import TIME, Column, Integer, String, TIMESTAMP, text, DATE, ForeignKey
+from sqlalchemy import (
+    TIME,
+    Column,
+    Integer,
+    String,
+    TIMESTAMP,
+    text,
+    DATE,
+    ForeignKey,
+    Enum,
+)
 from ..database import database
+from ..schemas.user_schema import Roles
 
 
 class User(database.Base):
@@ -8,6 +19,7 @@ class User(database.Base):
     id = Column(Integer, primary_key=True, nullable=False)
     email = Column(String, unique=True, nullable=False)
     password = Column(String, nullable=False)
+    role = Column(Enum(Roles), nullable=False, default="user")
     created_at = Column(
         TIMESTAMP(timezone=True),
         server_default=text("(datetime('now', 'localtime'))"),
