@@ -4,7 +4,7 @@ from typing import List
 from ..database import database
 from ..models import models
 from ..schemas import entry_schema
-from ..utils import oauth2
+from ..utils import oauth2, utils
 
 router = APIRouter(
     prefix="/entries",
@@ -31,7 +31,11 @@ def create_new_entry(
     db: Session = Depends(database.get_db),
     current_user=Depends(oauth2.get_current_user),
 ):
-    new_entry = models.Entry(user_id=current_user.id, **entry.dict())
+    temp = entry.dict()
+    print(temp)
+    if temp.get("calories") is None:
+        temp["calories"] = utils.get_calories(temp.get("meal_desc"))
+    new_entry = models.Entry(user_id=current_user.id, **temp)
     db.add(new_entry)
     db.commit()
     db.refresh(new_entry)
