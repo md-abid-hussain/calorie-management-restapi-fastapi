@@ -6,9 +6,10 @@ from ..models import models
 from ..schemas import entry_schema
 from ..utils import oauth2, utils
 
+
+verif_role = oauth2.create_role_verifier(["user", "admin"])
 router = APIRouter(
-    prefix="/entries",
-    tags=["entries"],
+    prefix="/entries", tags=["entries"], dependencies=[Depends(verif_role)]
 )
 
 
@@ -32,7 +33,6 @@ def create_new_entry(
     current_user=Depends(oauth2.get_current_user),
 ):
     temp = entry.dict()
-    print(temp)
     if temp.get("calories") is None:
         temp["calories"] = utils.get_calories(temp.get("meal_desc"))
     new_entry = models.Entry(user_id=current_user.id, **temp)
