@@ -1,5 +1,6 @@
 from pydantic import BaseModel, EmailStr
 from datetime import datetime
+from enum import Enum
 
 
 class UserRegister(BaseModel):
@@ -14,3 +15,9 @@ class UserResponse(BaseModel):
 
     class Config:
         orm_mode = True
+
+
+class Roles(str, Enum):
+    user = "user"
+    manager = "manager"
+    admin = "admin"
