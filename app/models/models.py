@@ -42,8 +42,10 @@ class Entry(database.Base):
 
 class UserSetting(database.Base):
     __tablename__ = "user_settings"
-    id = Column(Integer, primary_key=True, nullable=False)
-    expected_calories = Column(Integer, nullable=False, server_default=text("2250"))
     user_id = Column(
-        Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False
+        Integer,
+        ForeignKey("users.id", ondelete="CASCADE"),
+        primary_key=True,
+        nullable=False,
     )
+    expected_calories = Column(Integer, nullable=False, server_default=text("2250"))
