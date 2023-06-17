@@ -9,7 +9,7 @@ from ..utils import crypto
 router = APIRouter(prefix="/register", tags=["register"])
 
 
-@router.post("/", response_model=user_schema.UserResponse)
+@router.post("/", response_model=user_schema.UserBase)
 def register(user: user_schema.UserRegister, db: Session = Depends(database.get_db)):
     email_query = db.query(models.User).filter(models.User.email == user.email).first()
     if email_query:
