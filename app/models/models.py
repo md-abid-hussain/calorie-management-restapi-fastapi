@@ -2,6 +2,7 @@ from sqlalchemy import (
     TIME,
     Column,
     Integer,
+    Boolean,
     String,
     TIMESTAMP,
     text,
@@ -35,6 +36,7 @@ class Entry(database.Base):
     time = Column(TIME, nullable=False, server_default=text("(time('now'))"))
     meal_desc = Column(String, nullable=False)
     calories = Column(Integer, nullable=False, server_default=text("0"))
+    below_expected = Column(Boolean, nullable=False, server_default=text("true"))
     user_id = Column(
         Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False
     )
