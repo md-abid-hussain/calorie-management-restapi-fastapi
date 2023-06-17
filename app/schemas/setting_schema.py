@@ -6,7 +6,7 @@ class SettingBase(BaseModel):
 
 
 class SettingCreate(SettingBase):
-    user_id: int
+    pass
 
 
 class SettingResponse(SettingBase):
