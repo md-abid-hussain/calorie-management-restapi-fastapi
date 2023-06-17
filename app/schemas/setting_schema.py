@@ -11,3 +11,6 @@ class SettingCreate(SettingBase):
 
 class SettingResponse(SettingBase):
     user_id: int
+
+    class Config:
+        orm_mode = True
