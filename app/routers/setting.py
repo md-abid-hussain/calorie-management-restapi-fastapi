@@ -38,6 +38,16 @@ def create_user_setting(
     db: Session = Depends(database.get_db),
     current_user=Depends(verify_roles),
 ):
+    query = (
+        db.query(models.UserSetting)
+        .filter(models.UserSetting.user_id == current_user.id)
+        .first()
+    )
+    if query:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Setting for user {current_user.id} already exists",
+        )
     setting_dict = setting.dict()
     new_setting = models.UserSetting(user_id=current_user.id, **setting_dict)
     db.add(new_setting)
