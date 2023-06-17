@@ -17,6 +17,18 @@ class UserResponse(BaseModel):
         orm_mode = True
 
 
+class UserCreate(UserRegister):
+    role: str
+
+
+class UserCreateResponse(UserResponse):
+    role: str
+
+
+class UpdateUser(UserRegister):
+    role: str
+
+
 class Roles(str, Enum):
     user = "user"
     manager = "manager"
