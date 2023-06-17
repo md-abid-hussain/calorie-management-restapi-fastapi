@@ -7,10 +7,8 @@ from ..schemas import entry_schema
 from ..utils import oauth2, utils
 
 
-verif_role = oauth2.create_role_verifier(["user", "admin"])
-router = APIRouter(
-    prefix="/entries", tags=["entries"], dependencies=[Depends(verif_role)]
-)
+verif_role = oauth2.create_role_verifier(["admin"])
+router = APIRouter(prefix="/entries", tags=["entries"])
 
 
 @router.get("/", response_model=List[entry_schema.EntryResponse])
