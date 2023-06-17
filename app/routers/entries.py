@@ -7,14 +7,15 @@ from ..schemas import entry_schema
 from ..utils import oauth2, utils
 
 
-verif_role = oauth2.create_role_verifier(["admin"])
-router = APIRouter(prefix="/entries", tags=["entries"])
+router = APIRouter(prefix="/entries", tags=["User Entries"])
+
+verify_role = oauth2.create_role_verifier(["user"])
 
 
 @router.get("/", response_model=List[entry_schema.EntryResponse])
 def get_all_entries(
     db: Session = Depends(database.get_db),
-    current_user=Depends(oauth2.get_current_user),
+    current_user=Depends(verify_role),
 ):
     result = (
         db.query(models.Entry).filter(models.Entry.user_id == current_user.id).all()
@@ -28,7 +29,7 @@ def get_all_entries(
 def create_new_entry(
     entry: entry_schema.EntryCreate,
     db: Session = Depends(database.get_db),
-    current_user=Depends(oauth2.get_current_user),
+    current_user=Depends(verify_role),
 ):
     temp = entry.dict()
     if temp.get("calories") is None:
@@ -44,7 +45,7 @@ def create_new_entry(
 def get_entry_by_id(
     entry_id: int,
     db: Session = Depends(database.get_db),
-    current_user=Depends(oauth2.get_current_user),
+    current_user=Depends(verify_role),
 ):
     result = db.query(models.Entry).filter(models.Entry.id == entry_id).first()
     if not result:
@@ -67,7 +68,7 @@ def update_entry(
     entry_id: int,
     entry: entry_schema.EntryCreate,
     db: Session = Depends(database.get_db),
-    current_user=Depends(oauth2.get_current_user),
+    current_user=Depends(verify_role),
 ):
     result_query = db.query(models.Entry).filter(models.Entry.id == entry_id)
     result = result_query.first()
@@ -90,7 +91,7 @@ def update_entry(
 def delete_entry(
     entry_id: int,
     db: Session = Depends(database.get_db),
-    current_user=Depends(oauth2.get_current_user),
+    current_user=Depends(verify_role),
 ):
     delete_query = db.query(models.Entry).filter(models.Entry.id == entry_id)
     result = delete_query.first()
