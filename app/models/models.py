@@ -38,3 +38,12 @@ class Entry(database.Base):
     user_id = Column(
         Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False
     )
+
+
+class UserSetting(database.Base):
+    __tablename__ = "user_settings"
+    id = Column(Integer, primary_key=True, nullable=False)
+    expected_calories = Column(Integer, nullable=False, server_default=text("2250"))
+    user_id = Column(
+        Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False
+    )
