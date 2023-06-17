@@ -6,13 +6,14 @@ from ..schemas import setting_schema
 from ..utils import oauth2
 
 
+verify_roles = oauth2.create_role_verifier(["user"])
 router = APIRouter(prefix="/setting", tags=["Setting"])
 
 
 @router.get("/", response_model=setting_schema.SettingResponse)
 def get_setting(
     db: Session = Depends(database.get_db),
-    current_user=Depends(oauth2.get_current_user),
+    current_user=Depends(verify_roles),
 ):
     result = (
         db.query(models.UserSetting)
@@ -35,7 +36,7 @@ def get_setting(
 def create_user_setting(
     setting: setting_schema.SettingCreate,
     db: Session = Depends(database.get_db),
-    current_user=Depends(oauth2.get_current_user),
+    current_user=Depends(verify_roles),
 ):
     setting_dict = setting.dict()
     new_setting = models.UserSetting(user_id=current_user.id, **setting_dict)
@@ -53,7 +54,7 @@ def create_user_setting(
 def update_user_setting(
     setting: setting_schema.SettingCreate,
     db: Session = Depends(database.get_db),
-    current_user=Depends(oauth2.get_current_user),
+    current_user=Depends(verify_roles),
 ):
     setting_dict = setting.dict()
     result = (
@@ -75,7 +76,7 @@ def update_user_setting(
 @router.delete("/", status_code=status.HTTP_204_NO_CONTENT)
 def delete_user_setting(
     db: Session = Depends(database.get_db),
-    current_user=Depends(oauth2.get_current_user),
+    current_user=Depends(verify_roles),
 ):
     result = (
         db.query(models.UserSetting)
