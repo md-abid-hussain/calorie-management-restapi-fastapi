@@ -2,13 +2,12 @@ from pydantic import BaseModel
 
 
 class SettingBase(BaseModel):
-    user_id: int
     expected_calories: int
 
 
 class SettingCreate(SettingBase):
-    pass
+    user_id: int
 
 
 class SettingResponse(SettingBase):
-    pass
+    user_id: int
