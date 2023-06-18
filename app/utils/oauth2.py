@@ -53,7 +53,7 @@ def create_role_verifier(allowed_roles: list):
         if token_data.role not in allowed_roles:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
-                detail=f"User is not an admin",
+                detail=f"Forbidden",
                 headers={"WWW-Authenticate": "Bearer"},
             )
         return token_data
