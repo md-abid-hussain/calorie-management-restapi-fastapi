@@ -41,29 +41,6 @@ def get_entry_of_user(user_id: int, db: Session = Depends(database.get_db)):
     return entries
 
 
-@router.get("/{user_id}/entries/{id}", response_model=admin_schema.EntryResponse)
-def get_entry_with_id_of_user(
-    user_id: int, id: int, db: Session = Depends(database.get_db)
-):
-    user = db.query(models.User).filter(models.User.id == user_id).first()
-    if not user:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"User with id {user_id} does not exist",
-        )
-    entry = (
-        db.query(models.Entry)
-        .filter(models.Entry.id == id, models.Entry.user_id == user_id)
-        .first()
-    )
-    if not entry:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Entry with id {id} does not exist for user with id {user_id}",
-        )
-    return entry
-
-
 @router.post(
     "/{user_id}/entries",
     status_code=status.HTTP_201_CREATED,
@@ -110,6 +87,17 @@ def delete_all_entries_of_user(user_id: int, db: Session = Depends(database.get_
     entry_query.delete(synchronize_session=False)
     db.commit()
     return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+
+@router.get("/entries/{id}", response_model=admin_schema.EntryResponse)
+def get_entry_with_id(id: int, db: Session = Depends(database.get_db)):
+    entry = db.query(models.Entry).filter(models.Entry.id == id).first()
+    if not entry:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Entry with id {id} does not exist",
+        )
+    return entry
 
 
 @router.put("/entries/{id}", response_model=admin_schema.EntryResponse)
