@@ -1,12 +1,10 @@
-import os
 import requests
-from dotenv import load_dotenv
+from ..config import settings
 
-load_dotenv()
 
-url = os.getenv("CALORIES_URL")
-APP_ID = os.getenv("APP_ID")
-API_KEY = os.getenv("API_KEY")
+url = settings.CALORIES_URL
+APP_ID = settings
+API_KEY = settings.API_KEY
 
 headers = {"Content-Type": "application/json", "x-app-id": APP_ID, "x-app-key": API_KEY}
 
