@@ -7,7 +7,7 @@ from ..schemas import entry_schema
 from ..utils import oauth2, utils
 from datetime import date
 
-router = APIRouter(prefix="/entries", tags=["User Entries"])
+router = APIRouter(prefix="/entries", tags=["Entries CRUD User"])
 
 verify_role = oauth2.create_role_verifier(["user"])
 
@@ -43,6 +43,10 @@ def get_all_entries(
     result = (
         db.query(models.Entry).filter(models.Entry.user_id == current_user.id).all()
     )
+    if len(result) == 0:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="No entries found"
+        )
     return result
 
 
@@ -92,7 +96,7 @@ def get_entry_by_id(
 @router.put("/{entry_id}", response_model=entry_schema.EntryResponse)
 def update_entry(
     entry_id: int,
-    entry: entry_schema.EntryCreate,
+    entry: entry_schema.EntryUpdate,
     db: Session = Depends(database.get_db),
     current_user=Depends(verify_role),
 ):

@@ -13,6 +13,10 @@ class EntryCreate(EntryBase):
     pass
 
 
+class EntryUpdate(EntryBase):
+    pass
+
+
 class EntryResponse(EntryBase):
     id: int
     user_id: int
