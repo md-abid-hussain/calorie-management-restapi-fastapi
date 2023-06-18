@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Response
 from sqlalchemy.orm import Session
-from typing import List
+from typing import List, Optional
 from ...models import models
 from ...database import database
 from ...schemas import admin_schema
@@ -15,8 +15,19 @@ router = APIRouter(
 
 
 @router.get("/entries", response_model=List[admin_schema.UserEntriesResponse])
-def get_all_entries(db: Session = Depends(database.get_db)):
-    entries = db.query(models.Entry).all()
+def get_all_entries(
+    db: Session = Depends(database.get_db),
+    limit: int = 10,
+    skip: int = 0,
+    search: Optional[str] = "",
+):
+    entries = (
+        db.query(models.Entry)
+        .filter(models.Entry.meal_desc.contains(search))
+        .limit(limit)
+        .offset(skip)
+        .all()
+    )
     if len(entries) == 0:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="No entries found"
@@ -25,8 +36,20 @@ def get_all_entries(db: Session = Depends(database.get_db)):
 
 
 @router.get("/{user_id}/entries", response_model=List[admin_schema.EntryResponse])
-def get_entry_of_user(user_id: int, db: Session = Depends(database.get_db)):
-    user = db.query(models.User).filter(models.User.id == user_id).first()
+def get_entry_of_user(
+    user_id: int,
+    db: Session = Depends(database.get_db),
+    limit: int = 10,
+    skip: int = 0,
+    search: Optional[str] = "",
+):
+    user = (
+        db.query(models.User)
+        .filter(models.User.id == user_id, models.User.email.contains(search))
+        .limit(limit)
+        .offset(skip)
+        .first()
+    )
     if not user:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,

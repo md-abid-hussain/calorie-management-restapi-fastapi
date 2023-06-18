@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Response
 from sqlalchemy.orm import Session
-from typing import List
+from typing import List, Optional
 from ...database import database
 from ...schemas import admin_schema
 from ...models import models
@@ -13,8 +13,10 @@ router = APIRouter(
 
 
 @router.get("/settings", response_model=List[admin_schema.UserSettingResponse])
-def get_all_users_settings(db: Session = Depends(database.get_db)):
-    settings = db.query(models.UserSetting).all()
+def get_all_users_settings(
+    db: Session = Depends(database.get_db), limit: int = 10, skip: int = 0
+):
+    settings = db.query(models.UserSetting).limit(limit).offset(skip).all()
     if len(settings) == 0:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="No settings found"

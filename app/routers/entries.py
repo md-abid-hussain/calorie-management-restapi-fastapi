@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, status, HTTPException, Response
 from sqlalchemy.orm import Session
-from typing import List
+from typing import List, Optional
 from ..database import database
 from ..models import models
 from ..schemas import entry_schema
@@ -39,9 +39,17 @@ def is_below_expected(user_id: int, today: date, db: Session):
 def get_all_entries(
     db: Session = Depends(database.get_db),
     current_user=Depends(verify_role),
+    limit: int = 10,
+    skip: int = 0,
+    search: Optional[str] = "",
 ):
     result = (
-        db.query(models.Entry).filter(models.Entry.user_id == current_user.id).all()
+        db.query(models.Entry)
+        .filter(models.Entry.user_id == current_user.id)
+        .filter(models.Entry.meal_desc.contains(search))
+        .limit(limit)
+        .offset(skip)
+        .all()
     )
     if len(result) == 0:
         raise HTTPException(
