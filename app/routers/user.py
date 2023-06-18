@@ -5,22 +5,10 @@ from ..schemas import user_schema
 from ..models import models
 from ..database import database
 from ..utils import oauth2, crypto
-from .entry_setting_admin import setting, entry
 
 verify_role = oauth2.create_role_verifier(["manager", "admin"])
 verify_admin = oauth2.create_role_verifier(["admin"])
 router = APIRouter(prefix="/users", tags=["users"])
-
-
-router.include_router(
-    setting.router,
-    tags=["User Settings CRUD ADMIN"],
-    dependencies=[Depends(verify_admin)],
-)
-
-router.include_router(
-    entry.router, tags=["User Entries CRUD ADMIN"], dependencies=[Depends(verify_admin)]
-)
 
 
 @router.get("/", response_model=List[user_schema.UserResponse])
