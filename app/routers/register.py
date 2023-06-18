@@ -6,7 +6,7 @@ from ..database import database
 from ..utils import crypto
 
 
-router = APIRouter(prefix="/register", tags=["register"])
+router = APIRouter(prefix="/register", tags=["Registeration"])
 
 
 @router.post("/", response_model=user_schema.UserBase)
