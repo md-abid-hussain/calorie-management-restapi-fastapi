@@ -10,6 +10,7 @@ from sqlalchemy import (
     ForeignKey,
     Enum,
 )
+from sqlalchemy.orm import relationship
 from ..database import database
 from ..schemas.user_schema import Roles
 
@@ -40,6 +41,7 @@ class Entry(database.Base):
     user_id = Column(
         Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False
     )
+    owner = relationship("User")
 
 
 class UserSetting(database.Base):
@@ -51,3 +53,4 @@ class UserSetting(database.Base):
         nullable=False,
     )
     expected_calories = Column(Integer, nullable=False, server_default=text("2250"))
+    owner = relationship("User")
