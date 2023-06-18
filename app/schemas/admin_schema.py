@@ -7,6 +7,10 @@ class UserSettingResponse(setting_schema.SettingResponse):
 
 
 class UserSettingCreate(setting_schema.SettingCreate):
+    user_id: int
+
+
+class UserSettingUpdate(setting_schema.SettingCreate):
     pass
 
 
