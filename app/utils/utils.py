@@ -3,7 +3,7 @@ from ..config import settings
 
 
 url = settings.CALORIES_URL
-APP_ID = settings
+APP_ID = settings.APP_ID
 API_KEY = settings.API_KEY
 
 headers = {"Content-Type": "application/json", "x-app-id": APP_ID, "x-app-key": API_KEY}
