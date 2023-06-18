@@ -1,13 +1,12 @@
-import os
+# import os
 from sqlalchemy.engine import Engine
 from sqlalchemy import create_engine, event
 from sqlalchemy.orm import declarative_base
 from sqlalchemy.orm import sessionmaker
-from dotenv import load_dotenv
+from ..config import settings
 
-load_dotenv()
 
-SQLALCHEMY_DATABASE_URL = os.getenv("SQLITE_URL")
+SQLALCHEMY_DATABASE_URL = settings.SQLITE_URL
 
 engine = create_engine(
     SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False}
