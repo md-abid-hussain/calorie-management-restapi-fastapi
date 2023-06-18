@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Response
 from sqlalchemy.orm import Session
-from typing import List
+from typing import List, Optional
 from ..schemas import user_schema
 from ..models import models
 from ..database import database
@@ -13,9 +13,19 @@ router = APIRouter(prefix="/users", tags=["ADMIN and MANAGER CRUD Users"])
 
 @router.get("/", response_model=List[user_schema.UserResponse])
 def get_all_user(
-    db: Session = Depends(database.get_db), current_user=Depends(verify_role)
+    db: Session = Depends(database.get_db),
+    current_user=Depends(verify_role),
+    limit: int = 10,
+    skip: int = 0,
+    search: Optional[str] = "",
 ):
-    users = db.query(models.User).all()
+    users = (
+        db.query(models.User)
+        .filter(models.User.email.ilike(f"%{search}%"))
+        .offset(skip)
+        .limit(limit)
+        .all()
+    )
     if len(users) == 0:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="No users found"
