@@ -15,7 +15,7 @@ router = APIRouter(
 
 
 @router.get("/entries", response_model=List[admin_schema.UserEntriesResponse])
-def get_all_users_entries(db: Session = Depends(database.get_db)):
+def get_all_entries(db: Session = Depends(database.get_db)):
     entries = db.query(models.Entry).all()
     if len(entries) == 0:
         raise HTTPException(

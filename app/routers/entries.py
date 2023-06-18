@@ -7,7 +7,7 @@ from ..schemas import entry_schema
 from ..utils import oauth2, utils
 from datetime import date
 
-router = APIRouter(prefix="/entries", tags=["Entries CRUD User"])
+router = APIRouter(prefix="/entries", tags=["User CRUD Entries"])
 
 verify_role = oauth2.create_role_verifier(["user"])
 

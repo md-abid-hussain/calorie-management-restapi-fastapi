@@ -7,7 +7,7 @@ from ..utils import oauth2
 
 
 verify_roles = oauth2.create_role_verifier(["user"])
-router = APIRouter(prefix="/setting", tags=["Setting"])
+router = APIRouter(prefix="/setting", tags=["User CRUD Setting"])
 
 
 @router.get("/", response_model=setting_schema.SettingResponse)
