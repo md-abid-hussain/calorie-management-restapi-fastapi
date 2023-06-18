@@ -22,7 +22,7 @@ def get_all_users_settings(db: Session = Depends(database.get_db)):
     return settings
 
 
-@router.get("/{user_id}/settings", response_model=admin_schema.UserSettingResponse)
+@router.get("/settings/{user_id}", response_model=admin_schema.UserSettingResponse)
 def get_settings_by_user_id(user_id: int, db: Session = Depends(database.get_db)):
     user = db.query(models.User).filter(models.User.id == user_id).first()
     if not user:
@@ -44,32 +44,31 @@ def get_settings_by_user_id(user_id: int, db: Session = Depends(database.get_db)
 
 
 @router.post(
-    "/{user_id}/settings",
+    "/settings",
     status_code=status.HTTP_201_CREATED,
     response_model=admin_schema.UserSettingResponse,
 )
 def create_new_settings_for_user(
-    user_id: int,
     setting: admin_schema.UserSettingCreate,
     db: Session = Depends(database.get_db),
 ):
-    user = db.query(models.User).filter(models.User.id == user_id).first()
+    user = db.query(models.User).filter(models.User.id == setting.user_id).first()
     if not user:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"User with id {user_id} does not exist",
+            detail=f"User with id {setting.user_id} does not exist",
         )
     setting_query = (
         db.query(models.UserSetting)
-        .filter(models.UserSetting.user_id == user_id)
+        .filter(models.UserSetting.user_id == setting.user_id)
         .first()
     )
     if setting_query:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Setting of user with id {user_id} already exists",
+            detail=f"Setting of user with id {setting.user_id} already exists",
         )
-    new_setting = models.UserSetting(**setting.dict(), user_id=user_id)
+    new_setting = models.UserSetting(**setting.dict())
     db.add(new_setting)
     db.commit()
     db.refresh(new_setting)
@@ -77,13 +76,13 @@ def create_new_settings_for_user(
 
 
 @router.put(
-    "/{user_id}/settings",
+    "/settings/{user_id}",
     status_code=status.HTTP_202_ACCEPTED,
     response_model=admin_schema.UserSettingResponse,
 )
 def update_settings_for_user(
     user_id: int,
-    setting: admin_schema.UserSettingCreate,
+    setting: admin_schema.UserSettingUpdate,
     db: Session = Depends(database.get_db),
 ):
     user = db.query(models.User).filter(models.User.id == user_id).first()
@@ -108,7 +107,7 @@ def update_settings_for_user(
     return setting_query
 
 
-@router.delete("/{user_id}/settings", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/settings/{user_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_settings_for_user(user_id: int, db: Session = Depends(database.get_db)):
     user = db.query(models.User).filter(models.User.id == user_id).first()
     if not user:
