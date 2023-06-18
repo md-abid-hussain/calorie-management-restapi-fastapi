@@ -3,6 +3,12 @@ from datetime import datetime
 from enum import Enum
 
 
+class Roles(str, Enum):
+    user = "user"
+    manager = "manager"
+    admin = "admin"
+
+
 class UserBase(BaseModel):
     id: int
     email: EmailStr
@@ -18,22 +24,16 @@ class UserRegister(BaseModel):
 
 
 class UserResponse(UserBase):
-    role: str
+    role: Roles
 
 
 class UserCreate(UserRegister):
-    role: str
+    role: Roles
 
 
 class UserCreateResponse(UserResponse):
-    role: str
+    role: Roles
 
 
 class UpdateUser(UserRegister):
-    role: str
-
-
-class Roles(str, Enum):
-    user = "user"
-    manager = "manager"
-    admin = "admin"
+    role: Roles
