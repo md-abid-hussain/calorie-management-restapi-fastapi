@@ -8,7 +8,7 @@ from ..utils import oauth2, crypto
 
 verify_role = oauth2.create_role_verifier(["manager", "admin"])
 
-router = APIRouter(prefix="/users", tags=["users"])
+router = APIRouter(prefix="/users", tags=["ADMIN and MANAGER CRUD Users"])
 
 
 @router.get("/", response_model=List[user_schema.UserResponse])
