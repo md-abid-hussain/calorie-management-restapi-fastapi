@@ -6,8 +6,12 @@ from ...database import database
 from ...schemas import admin_schema
 from ...utils import utils
 from ..entries import is_below_expected
+from ...utils import oauth2
 
-router = APIRouter()
+verify_admin = oauth2.create_role_verifier(["admin"])
+router = APIRouter(
+    prefix="/users", tags=["Admin CRUD entries"], dependencies=[Depends(verify_admin)]
+)
 
 
 @router.get("/entries", response_model=List[admin_schema.UserEntriesResponse])

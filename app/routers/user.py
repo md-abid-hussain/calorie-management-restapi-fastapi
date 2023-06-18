@@ -7,7 +7,7 @@ from ..database import database
 from ..utils import oauth2, crypto
 
 verify_role = oauth2.create_role_verifier(["manager", "admin"])
-verify_admin = oauth2.create_role_verifier(["admin"])
+
 router = APIRouter(prefix="/users", tags=["users"])
 
 

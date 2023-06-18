@@ -4,8 +4,12 @@ from typing import List
 from ...database import database
 from ...schemas import admin_schema
 from ...models import models
+from ...utils import oauth2
 
-router = APIRouter()
+verify_admin = oauth2.create_role_verifier(["admin"])
+router = APIRouter(
+    prefix="/users", tags=["Admin CRUD settings"], dependencies=[Depends(verify_admin)]
+)
 
 
 @router.get("/settings", response_model=List[admin_schema.UserSettingResponse])
