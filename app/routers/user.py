@@ -53,12 +53,13 @@ def create_new_user(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=f"Email {user.email} already registered",
         )
-    if current_user.role.value == "manager" and user.role == "admin":
+    if current_user.role == "manager" and user.role == "admin":
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail=f"User is not an admin",
             headers={"WWW-Authenticate": "Bearer"},
         )
+
     hashed_password = crypto.hash(user.password)
     user.password = hashed_password
     new_user = models.User(**user.dict())
@@ -81,7 +82,14 @@ def update_user(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=f"User with id {id} does not exist",
         )
-    if current_user.role.value == "manager" and user.role == "admin":
+    email_query = db.query(models.User).filter(models.User.email == user.email).first()
+    if email_query.id != id:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Email {user.email} already registered",
+        )
+
+    if current_user.role == "manager" and user.role == "admin":
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail=f"User is not an admin",
@@ -104,10 +112,7 @@ def delete_user(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=f"User with id {id} does not exist",
         )
-    if (
-        current_user.role.value == "manager"
-        and user_query.first().role.value == "admin"
-    ):
+    if current_user.role == "manager" and user_query.first().role.value == "admin":
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail=f"User is not an admin",
