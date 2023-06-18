@@ -29,6 +29,7 @@ def login(
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED, detail=f"Incorrect Password"
         )
-
-    access_token = oauth2.create_access_token(data={"user_id": user.id})
+    access_token = oauth2.create_access_token(
+        data={"user_id": user.id, "role": user.role.value}
+    )
     return {"access_token": access_token, "token_type": "bearer"}
