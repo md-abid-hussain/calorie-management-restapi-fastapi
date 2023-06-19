@@ -93,7 +93,7 @@ def update_user(
             detail=f"User with id {id} does not exist",
         )
     email_query = db.query(models.User).filter(models.User.email == user.email).first()
-    if email_query.id != id:
+    if email_query and email_query.id != id:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=f"Email {user.email} already registered",
