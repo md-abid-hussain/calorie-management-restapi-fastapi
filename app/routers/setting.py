@@ -74,7 +74,7 @@ def update_user_setting(
     )
     if not result:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
+            status_code=status.HTTP_400_BAD_REQUEST,
             detail=f"Setting for user {current_user.id} not found",
         )
     result.expected_calories = setting_dict.get("expected_calories")
@@ -95,8 +95,8 @@ def delete_user_setting(
     )
     if not result:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Setting for user {current_user.id} not found",
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Setting for user {current_user.id} does not exist",
         )
     db.delete(result)
     db.commit()
