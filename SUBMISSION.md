@@ -23,6 +23,10 @@ Run the test using `pytest -v -s`
 Use the following command in terminal to start the server
 `uvicorn app.main:app --reload`
 
+## Creating admin and manager
+
+To create admin and manager run `create_admin_&_manager.py`
+
 ## Documentation
 
 After running the sever open `http://127.0.0.1:8000/docs` or `http://127.0.0.1:8000/redoc`

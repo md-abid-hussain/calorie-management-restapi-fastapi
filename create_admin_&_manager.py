@@ -28,3 +28,12 @@ with database.engine.connect() as conn:
         )
     )
     conn.commit()
+
+print("Admin and Manager created successfully\n")
+print("admin-username: ", admin["email"], "\nadmin-password: ", admin["password"])
+print(
+    "\nmanager-username: ",
+    manager["email"],
+    "\nmanager-password: ",
+    manager["password"],
+)
