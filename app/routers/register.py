@@ -9,7 +9,9 @@ from ..utils import crypto
 router = APIRouter(prefix="/register", tags=["Registeration"])
 
 
-@router.post("/", response_model=user_schema.UserBase)
+@router.post(
+    "/", response_model=user_schema.UserBase, status_code=status.HTTP_201_CREATED
+)
 def register(user: user_schema.UserRegister, db: Session = Depends(database.get_db)):
     email_query = db.query(models.User).filter(models.User.email == user.email).first()
     if email_query:
