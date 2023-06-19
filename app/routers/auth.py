@@ -22,12 +22,12 @@ def login(
 
     if not user:
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED, detail=f"Invalid Credentials"
+            status_code=status.HTTP_403_FORBIDDEN, detail=f"Invalid Credentials"
         )
 
     if not crypto.verify(user_credential.password, user.password):
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED, detail=f"Incorrect Password"
+            status_code=status.HTTP_403_FORBIDDEN, detail=f"Incorrect Password"
         )
     access_token = oauth2.create_access_token(
         data={"user_id": user.id, "role": user.role.value}
