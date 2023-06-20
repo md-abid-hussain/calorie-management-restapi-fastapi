@@ -11,7 +11,7 @@ models.database.Base.metadata.create_all(bind=database.engine)
 app = FastAPI()
 
 
-origins = []
+origins = ["http://localhost", "https://localhost", "http://localhost:8080"]
 
 app.add_middleware(
     CORSMiddleware,
