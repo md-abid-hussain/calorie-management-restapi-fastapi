@@ -9,7 +9,7 @@ from app.utils.oauth2 import create_access_token
 from app.models import models
 
 
-SQLALCHEMY_DATABASE_URL = "sqlite:///./test_sql_app.db"
+SQLALCHEMY_DATABASE_URL = "sqlite:///./test_sql_app.sqlite3"
 
 engine = create_engine(
     SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False}
