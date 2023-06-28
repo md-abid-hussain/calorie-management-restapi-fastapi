@@ -15,19 +15,22 @@ manager = {
     "role": "manager",
 }
 
-
-with database.engine.connect() as conn:
-    conn.execute(
-        text(
-            f"INSERT INTO users (email, password,role) VALUES ('{admin['email']}','{hash(admin['password'])}','{admin['role']}')"
+try:
+    with database.engine.connect() as conn:
+        conn.execute(
+            text(
+                f"INSERT INTO users (email, password,role) VALUES ('{admin['email']}','{hash(admin['password'])}','{admin['role']}')"
+            )
         )
-    )
-    conn.execute(
-        text(
-            f"INSERT INTO users (email, password,role) VALUES ('{manager['email']}','{hash(manager['password'])}','{manager['role']}')"
+        conn.execute(
+            text(
+                f"INSERT INTO users (email, password,role) VALUES ('{manager['email']}','{hash(manager['password'])}','{manager['role']}')"
+            )
         )
-    )
-    conn.commit()
+        conn.commit()
+except Exception as e:
+    print(e)
+    print("Admin and manager already exist in db")
 
 print("Admin and Manager created successfully\n")
 print("admin-username: ", admin["email"], "\nadmin-password: ", admin["password"])
