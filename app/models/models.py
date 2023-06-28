@@ -11,11 +11,11 @@ from sqlalchemy import (
     Enum,
 )
 from sqlalchemy.orm import relationship
-from ..database import database
+from ..database.database import Base
 from ..schemas.user_schema import Roles
 
 
-class User(database.Base):
+class User(Base):
     __tablename__ = "users"
 
     id = Column(Integer, primary_key=True, nullable=False)
@@ -29,7 +29,7 @@ class User(database.Base):
     )
 
 
-class Entry(database.Base):
+class Entry(Base):
     __tablename__ = "entries"
 
     id = Column(Integer, primary_key=True, nullable=False)
@@ -44,7 +44,7 @@ class Entry(database.Base):
     owner = relationship("User")
 
 
-class UserSetting(database.Base):
+class UserSetting(Base):
     __tablename__ = "user_settings"
     user_id = Column(
         Integer,
