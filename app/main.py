@@ -6,7 +6,7 @@ from .database import database
 from .routers import user, entries, register, auth, setting
 from .routers.admin_crud import entry as entry_crud, setting as setting_crud
 
-models.database.Base.metadata.create_all(bind=database.engine)
+# models.database.Base.metadata.create_all(bind=database.engine)
 
 app = FastAPI()
 
