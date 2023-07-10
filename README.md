@@ -1,5 +1,8 @@
 # CALORIE MANAGEMENT REST-API
 
+## Project Requirement
+Check out [project requirements](https://github.com/md-abid-hussain/calorie-management-restapi-fastapi/blob/main/REQUIREMENT.md)
+
 ## Setting up project
 
 - Clone this repository
